@@ -1,0 +1,574 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Flask API for Electronic Products",
+    "description": "API with CRUD operations for Electronic Products, User Management, and JWT Authentication",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter your Bearer token in the format **Bearer &lt;token&gt;**"
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "description": "This endpoint registers a new user with a username, password, and role.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User registration data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "user123"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "example": "pass123"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
+                }
+              },
+              "required": ["username", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User registered successfully!"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Username already exists",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Username already exists!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login a user",
+        "description": "This endpoint logs in a user and returns a JWT token.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User login data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "user123"
+                },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "example": "pass123"
+                }
+              },
+              "required": ["username", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Invalid credentials"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/users": {
+      "get": {
+        "summary": "Get all users",
+        "description": "Fetches a list of all users. Admin access required.",
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "A list of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer", "example": 1 },
+                  "username": { "type": "string", "example": "user123" },
+                  "role": { "type": "string", "example": "admin" }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin access required",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Admin access required"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/user/{id}": {
+      "get": {
+        "summary": "Get user by ID",
+        "description": "Fetches a user by their ID. Admin or the user himself can access.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer", "example": 1 },
+                "username": { "type": "string", "example": "user123" },
+                "role": { "type": "string", "example": "admin" }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string", "example": "Permission denied" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": { "type": "string", "example": "User not found" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update user by ID",
+        "description": "Updates a user by their ID. Admin or the user himself can access.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "User ID"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": { "type": "string", "example": "updatedUser" },
+                "password": {
+                  "type": "string",
+                  "format": "password",
+                  "example": "newPass123"
+                },
+                "role": { "type": "string", "example": "user" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User updated successfully"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Permission denied",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string", "example": "Permission denied" }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": { "type": "string", "example": "User not found" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user by ID",
+        "description": "Deletes a user by their ID. Admin access required.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "User deleted successfully"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Admin access required",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Admin access required"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": { "type": "string", "example": "User not found" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Get all electronic products",
+        "description": "Fetches a list of all electronic products.",
+        "responses": {
+          "200": {
+            "description": "A list of electronic products",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "integer", "example": 1 },
+                  "name": { "type": "string", "example": "Smartphone X" },
+                  "description": {
+                    "type": "string",
+                    "example": "Latest smartphone model"
+                  },
+                  "price": { "type": "number", "example": 999.99 },
+                  "brand": { "type": "string", "example": "TechBrand" },
+                  "model_number": { "type": "string", "example": "SX-2023" },
+                  "category": { "type": "string", "example": "Smartphones" },
+                  "stock": { "type": "integer", "example": 100 }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new electronic product",
+        "description": "Adds a new electronic product to the inventory.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Electronic product details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "Smartphone X" },
+                "description": {
+                  "type": "string",
+                  "example": "Latest smartphone model"
+                },
+                "price": { "type": "number", "example": 999.99 },
+                "brand": { "type": "string", "example": "TechBrand" },
+                "model_number": { "type": "string", "example": "SX-2023" },
+                "category": { "type": "string", "example": "Smartphones" },
+                "stock": { "type": "integer", "example": 100 }
+              },
+              "required": ["name", "price", "brand", "model_number", "category"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Electronic product successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer", "example": 1 },
+                "name": { "type": "string", "example": "Smartphone X" },
+                "description": {
+                  "type": "string",
+                  "example": "Latest smartphone model"
+                },
+                "price": { "type": "number", "example": 999.99 },
+                "brand": { "type": "string", "example": "TechBrand" },
+                "model_number": { "type": "string", "example": "SX-2023" },
+                "category": { "type": "string", "example": "Smartphones" },
+                "stock": { "type": "integer", "example": 100 }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Invalid data"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "summary": "Get electronic product by ID",
+        "description": "Fetches a single electronic product by its ID.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "The ID of the electronic product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Electronic product found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer", "example": 1 },
+                "name": { "type": "string", "example": "Smartphone X" },
+                "description": {
+                  "type": "string",
+                  "example": "Latest smartphone model"
+                },
+                "price": { "type": "number", "example": 999.99 },
+                "brand": { "type": "string", "example": "TechBrand" },
+                "model_number": { "type": "string", "example": "SX-2023" },
+                "category": { "type": "string", "example": "Smartphones" },
+                "stock": { "type": "integer", "example": 100 }
+              }
+            }
+          },
+          "404": {
+            "description": "Electronic product not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Electronic product not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update electronic product by ID",
+        "description": "Updates an existing electronic product by its ID.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "The ID of the electronic product"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated electronic product details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string", "example": "Updated Smartphone X" },
+                "description": {
+                  "type": "string",
+                  "example": "Updated latest smartphone model"
+                },
+                "price": { "type": "number", "example": 1099.99 },
+                "brand": { "type": "string", "example": "TechBrand" },
+                "model_number": { "type": "string", "example": "SX-2023-U" },
+                "category": { "type": "string", "example": "Smartphones" },
+                "stock": { "type": "integer", "example": 150 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Electronic product successfully updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Electronic product updated successfully"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Electronic product not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Electronic product not found"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete electronic product by ID",
+        "description": "Deletes an electronic product by its ID.",
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "The ID of the electronic product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Electronic product successfully deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Electronic product deleted successfully"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Electronic product not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string",
+                  "example": "Electronic product not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
