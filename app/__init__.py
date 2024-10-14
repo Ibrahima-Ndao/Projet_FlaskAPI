@@ -14,15 +14,16 @@ def create_app(config_class='config.Config'):
     app = Flask(__name__)
     CORS(app)
     
-    if config_class == 'testing':
-        app.config.from_object('config.TestingConfig')
-    else:
-        app.config.from_object(config_class)
+    app.config.from_object(config_class)
+    # Supprimez ou commentez les lignes suivantes si elles existent
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Ndao123456789@localhost/flaskApi'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    db.init_app(app)
 
     @app.route('/', methods=['GET'])
     def homepage():
@@ -36,5 +37,6 @@ def create_app(config_class='config.Config'):
     
     from .utils import swaggerui_bp, SWAGGER_URL
     app.register_blueprint(swaggerui_bp, url_prefix=SWAGGER_URL)
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
 
     return app

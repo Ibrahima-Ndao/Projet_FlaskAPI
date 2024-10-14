@@ -17,8 +17,8 @@ def register():
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "Username already exists!"}), 400
 
-    hashed_password = generate_password_hash(password)
-    new_user = User(username=username, password=hashed_password, role=role)
+    new_user = User(username=username, password='', role=role)
+    new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()
 
