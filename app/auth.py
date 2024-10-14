@@ -53,7 +53,7 @@ def get_users():
         return jsonify({"message": "Admin access required"}), 403
 
     users = User.query.all()
-    users_list = [{"id": u.id, "username": u.username, "role": u.role} for u in users]
+    users_list = [{"id": u.id, "username": u.username, "role": u.role, "firstname": u.firstname, "lastname": u.lastname, "email": u.email} for u in users]
     return jsonify(users_list), 200
 
 # Get a single user by ID (admin or the user himself)
