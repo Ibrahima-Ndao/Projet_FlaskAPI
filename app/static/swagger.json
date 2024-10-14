@@ -7,7 +7,7 @@
   },
   "host": "projet-flaskapi-ibrahima-ndao-p30o.onrender.com",
   "basePath": "/api",
-  "schemes": ["http", "https"],
+  "schemes": ["https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "securityDefinitions": {
@@ -53,13 +53,15 @@
                   "type": "string",
                   "format": "email",
                   "example": "john.doe@example.com"
-                },
-                "role": {
-                  "type": "string",
-                  "example": "user"
                 }
               },
-              "required": ["username", "password", "email"]
+              "required": [
+                "username",
+                "password",
+                "email",
+                "firstname",
+                "lastname"
+              ]
             }
           }
         ],
