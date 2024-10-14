@@ -9,20 +9,29 @@ auth_bp = Blueprint('auth_bp', __name__)
 # Register a new user
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    role = data.get('role', 'user')
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        email = data.get('email')
+        role = data.get('role', 'user')
 
-    if User.query.filter_by(username=username).first():
-        return jsonify({"error": "Username already exists!"}), 400
+        if User.query.filter_by(username=username).first():
+            return jsonify({"error": "Username already exists!"}), 400
+        if User.query.filter_by(email=email).first():
+            return jsonify({"error": "Email already exists!"}), 400
 
-    new_user = User(username=username, password='', role=role)
-    new_user.set_password(password)
-    db.session.add(new_user)
-    db.session.commit()
+        new_user = User(username=username, firstname=firstname, lastname=lastname, email=email, role=role)
+        new_user.set_password(password)
+        db.session.add(new_user)
+        db.session.commit()
 
-    return jsonify({"message": "User registered successfully!"}), 201
+        return jsonify({"message": "User registered successfully!"}), 201
+    except Exception as e:
+        print(f"Registration error: {str(e)}")
+        return jsonify({"error": "An error occurred during registration"}), 500
 
 # Login a user
 @auth_bp.route('/login', methods=['POST'])
@@ -68,11 +77,14 @@ def update_user(id):
     user = User.query.get(current_user['id'])
     target_user = User.query.get_or_404(id)
 
-    if user.role != 'admin' and user.id != target_user.id: # type: ignore
+    if user.role != 'admin' and user.id != target_user.id:
         return jsonify({"message": "Permission denied"}), 403
 
     data = request.get_json()
     target_user.username = data.get('username', target_user.username)
+    target_user.firstname = data.get('firstname', target_user.firstname)
+    target_user.lastname = data.get('lastname', target_user.lastname)
+    target_user.email = data.get('email', target_user.email)
     if data.get('password'):
         target_user.password_hash = generate_password_hash(data['password'])
     target_user.role = data.get('role', target_user.role)

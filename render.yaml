@@ -13,3 +13,6 @@ services:
         value: "postgresql://flask_api_db_t8sf_user:CdqXu3VHlzpmLR6mbeIM2RPjdXq0GqbZ@dpg-cs5uj1lumphs73b2t840-a.oregon-postgres.render.com/flask_api_db_t8sf"
       - key: JWT_SECRET_KEY
         value: "supersecret"
+    domains:
+      - http://localhost:5000
+      - https://localhost:5000

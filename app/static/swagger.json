@@ -22,7 +22,7 @@
     "/auth/register": {
       "post": {
         "summary": "Register a new user",
-        "description": "This endpoint registers a new user with a username, password, and role.",
+        "description": "This endpoint registers a new user with a username, password, firstname, lastname, email, and role.",
         "parameters": [
           {
             "in": "body",
@@ -40,9 +40,26 @@
                   "type": "string",
                   "format": "password",
                   "example": "pass123"
+                },
+                "firstname": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "example": "john.doe@example.com"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "user"
                 }
               },
-              "required": ["username", "password"]
+              "required": ["username", "password", "email"]
             }
           }
         ],
@@ -60,7 +77,7 @@
             }
           },
           "400": {
-            "description": "Username already exists",
+            "description": "Username or email already exists",
             "schema": {
               "type": "object",
               "properties": {
