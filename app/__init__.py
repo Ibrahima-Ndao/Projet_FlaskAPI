@@ -14,7 +14,10 @@ def create_app(config_class='config.Config'):
     app = Flask(__name__)
     CORS(app)
     
-    app.config.from_object(config_class)
+    if config_class == 'testing':
+        app.config.from_object('config.TestingConfig')
+    else:
+        app.config.from_object(config_class)
 
     db.init_app(app)
     ma.init_app(app)
