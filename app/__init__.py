@@ -9,7 +9,6 @@ db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
 jwt = JWTManager()
-
 def create_app(config_class='config.Config'):
     app = Flask(__name__)
     CORS(app)
