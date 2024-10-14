@@ -5,9 +5,9 @@
     "description": "API with CRUD operations for Electronic Products, User Management, and JWT Authentication",
     "version": "1.0.0"
   },
-  "host": "localhost:5000",
+  "host": "projet-flaskapi-ibrahima-ndao-p30o.onrender.com",
   "basePath": "/api",
-  "schemes": ["http"],
+  "schemes": ["https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "securityDefinitions": {
