@@ -67,7 +67,7 @@ def get_user(id):
     if user.role != 'admin' and user.id != target_user.id: # type: ignore
         return jsonify({"message": "Permission denied"}), 403
 
-    return jsonify({"id": target_user.id, "username": target_user.username, "role": target_user.role}), 200
+    return jsonify({"id": target_user.id, "username": target_user.username, "role": target_user.role, "firstname": target_user.firstname, "lastname": target_user.lastname, "email": target_user.email}), 200
 
 # Update a user's info (admin or the user himself)
 @auth_bp.route('/user/<int:id>', methods=['PUT'])
