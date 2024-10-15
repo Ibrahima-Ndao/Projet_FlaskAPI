@@ -605,51 +605,6 @@
           }
         }
       }
-    },
-    "/users": {
-      "get": {
-        "summary": "Get all users",
-        "description": "Retrieves a list of all users. Requires authentication.",
-        "security": [{ "BearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "List of all users",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "example": 1
-                  },
-                  "username": {
-                    "type": "string",
-                    "example": "user123"
-                  },
-                  "firstname": {
-                    "type": "string",
-                    "example": "John"
-                  },
-                  "lastname": {
-                    "type": "string",
-                    "example": "Doe"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "john.doe@example.com"
-                  },
-                  "role": {
-                    "type": "string",
-                    "example": "user"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
